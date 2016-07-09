@@ -24,21 +24,21 @@ Place the project file in /usr/bin so the script can be called from anywere in t
 ##Commands
 Here are the commands:
 
-- Add a new project
+`Add a new project`
 
 > project add #projectName #projectDirectory
 
-- See current list of projects
+`See current list of projects`
 
- > project list
+> project list
 
--- Delete a project
+`Delete a project`
 
 > project remove #projectName
 
--- Select a project. This sets this project directory as the selected project in MAMP, and restarts apache and mysql.
--- It also opens up the project directory in sublime.  
--- Currently on line 179, any custom scripts can be added when selecting your project. i.e, running gulp/grunt or other processes.  
+`Select a project`. This sets this project directory as the selected project in MAMP, and restarts apache and mysql.
+It also opens up the project directory in sublime.  
+Currently on line 179, any custom scripts can be added when selecting your project. i.e, running gulp/grunt or other processes.  
 
 > project select #projectName
 
