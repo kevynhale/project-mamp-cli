@@ -1,8 +1,8 @@
-# project-mamp-cli
+## project-mamp-cli
 CLI tool for mac to manage free MAMP projects through the cli.
 
 To use these tool you will need to make sure to properly set up your directories. Make sure to point the script to the location of the management scripts in MAMP:
-  3 #set static files.
+ \n 3 #set static files.
   4 startApache='/Applications/MAMP/bin/startApache.sh'
   5 stopApache='/Applications/MAMP/bin/stopApache.sh'
   6 startMysql='/Applications/MAMP/bin/startMysql.sh'
