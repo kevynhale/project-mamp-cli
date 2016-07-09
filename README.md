@@ -1,16 +1,17 @@
-## project-mamp-cli
+# project-mamp-cli
 
 ##Summary
 CLI tool for mac to manage free MAMP projects through the cli.
 
 ##Installation
-To use these tool you will need to make sure to properly set up your directories. Make sure to point the script to the location of the management scripts in MAMP:
- \n 3 #set static files.
-  4 startApache='/Applications/MAMP/bin/startApache.sh'
-  5 stopApache='/Applications/MAMP/bin/stopApache.sh'
-  6 startMysql='/Applications/MAMP/bin/startMysql.sh'
-  7 stopMysql='/Applications/MAMP/bin/stopMysql.sh'
-  8 ROOT='/Applications/MAMP/conf/apache/httpd.conf'
+To use these tool you will need to make sure to properly set up your directories. Make sure to point the script to the location of the management scripts in MAMP:  
+
+  3 #set static files.  
+  4 startApache='/Applications/MAMP/bin/startApache.sh'  
+  5 stopApache='/Applications/MAMP/bin/stopApache.sh'  
+  6 startMysql='/Applications/MAMP/bin/startMysql.sh'  
+  7 stopMysql='/Applications/MAMP/bin/stopMysql.sh'  
+  8 ROOT='/Applications/MAMP/conf/apache/httpd.conf'  
   
 Next, you will need to set up a directory and file to store you project data. The project data will simply contain a a list of the project name and directory.
   
@@ -25,21 +26,21 @@ Here are the commands:
 
 - Add a new project
 
-project add #projectName #projectDirectory
+> project add #projectName #projectDirectory
 
 - See current list of projects
 
-project list
+ > project list
 
 -- Delete a project
 
-project remove #projectName
+> project remove #projectName
 
 -- Select a project. This sets this project directory as the selected project in MAMP, and restarts apache and mysql.
--- It also opens up the project directory in sublime.
--- Currently on line 179, any custom scripts can be added when selecting your project. i.e, running gulp/grunt or other processes.
+-- It also opens up the project directory in sublime.  
+-- Currently on line 179, any custom scripts can be added when selecting your project. i.e, running gulp/grunt or other processes.  
 
-project select #projectName
+> project select #projectName
 
 ## Contribute
 Feel free to contribute and branch off and share your changes and additions. If you have made changes to the overall structure, submit a pull request and I will be happy to review it.
