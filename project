@@ -1,0 +1,201 @@
+#!/bin/bash
+
+#set static files.
+startApache='/Applications/MAMP/bin/startApache.sh'
+stopApache='/Applications/MAMP/bin/stopApache.sh'
+startMysql='/Applications/MAMP/bin/startMysql.sh'
+stopMysql='/Applications/MAMP/bin/stopMysql.sh'
+ROOT='/Applications/MAMP/conf/apache/httpd.conf'
+HOME='' #set Home Directory
+LISTDIR="$HOME/Applications/project" #create a directory to store the project list in
+LISTFILE="$LISTDIR/project.list" #create a file to store the projects in.
+
+#Pass through Arguments.
+CMD=$1
+ARG1=$2
+ARG2=$3
+ARG3=$4
+
+#check if list file exists, else create
+if [ ! -d "$LISTDIR" ]; then
+    echo "File $LISTFILE not found! Creating Directory and file"
+    mkdir "$LISTDIR"
+    touch "$LISTFILE"
+elif [ ! -f "$LISTFILE" ]; then
+	echo "file $LISTFILE not found, but directory is. Creating file"
+	touch "$LISTFILE"
+fi
+
+function addParamCheck () {
+	if [ ! -z "$3" ]; then
+		echo "Extra paramenter '$1' is not understood, add requires only two parameters"
+		exit
+	elif [ -z "$2" ]; then
+		if [ -z "$1" ]; then
+			echo "project add requires two parameters (project_name, project_dir) and neither were submitted."
+			exit
+		fi
+		echo "project add requires two parameters (project_name, project_dir) and no project_dir was submitted"
+		exit
+	fi
+}
+
+function checkExistingProject () {
+	#$1 projec_name
+	#$2 project.list file
+	while read p; do
+  		project=$(echo $p | awk '{ print $1 }')
+  		if [ "$1" == "$project" ]; then
+  			echo "The project name '$project' already exists - please try a different project name"
+  			exit
+  		fi
+	done < $2
+}
+
+function checkProjectDir () {
+	# $1 project_dir
+	if [ ! -d "$1" ]; then
+    	echo "Directory '$1' not found! Please pass through a valid directory"
+    	exit
+    fi
+}
+
+function addProject () {
+	# $1 project_name
+	# $2 project_dir
+	# $3 project.list file
+	message="$1 $2"
+	echo $message >> $3
+}
+
+function listParamCheck () {
+	if [ ! -z "$1" ]; then
+		echo "Command List requires no parameters, please try again without any."
+		exit
+	fi
+
+}
+
+function singleParamCheck () {
+	if [ ! -z "$3"]; then
+		echo "Command $2 requires only one parameter, please try again with only one."
+		exit
+	fi
+
+}
+
+function showList () {
+	# $1 LISTFILE
+	while read p; do
+  		echo "$p"
+	done < $1
+}
+
+function ifExists () {
+	# $1 project_name
+	# $2 LISTFILE
+	EXIST=false
+	while read p; do
+  		project=$(echo $p | awk '{ print $1 }')
+  		if [ "$1" == "$project" ]; then
+  			EXIST=true
+  		fi
+	done < $2
+
+	if ! $EXIST; then
+		echo "Project $1 does not exist."
+		exit
+	fi
+
+}
+
+function removeProject () {
+	# $1 project_name
+	# $2 LISTFILE
+	ifExists $1 $2
+
+	LINEcon=$(grep "^$1 " $2)
+	LINEnum=$(grep -n "^$1 " $2 |cut -f1 -d:)
+	sed -i "/^$1 /d" $2
+	echo "Line #$LINEnum deleted: $LINEcon"
+}
+
+function getDir() {
+	project=$1
+	list=$2
+
+		while read p; do
+  		temp=$(echo $p | awk '{ print $1 }')
+  		if [ "$project" == "$temp" ]; then
+  			projdir=$(echo $p | awk '{ print $2 }')
+
+  		fi
+		done < $list
+
+		echo $projdir
+}
+
+function changeRoot () {
+	project=$1
+	list=$2
+	root=$3
+	projdir=$4
+
+
+	sed -i "s|^DocumentRoot .*|DocumentRoot \"$projdir\"|g" $root
+
+	
+}
+
+case "$CMD" in
+        add)
+			#ARG1 = project_name
+			#ARG2 = project_dir
+			#ARG3 = Too many arguments
+			addParamCheck $ARG1 $ARG2 $ARG3
+			checkExistingProject $ARG1 $LISTFILE
+			checkProjectDir $ARG2
+			addProject $ARG1 $ARG2 $LISTFILE
+			echo "New project '$ARG1 $ARG2' has been added."
+			exit
+            ;;
+
+        select)
+			CASE='select'
+			# ARG1 project_name
+			# ARG2 = Too many arguments
+			singleParamCheck $ARG1 $CASE $ARG2
+			ifExists $ARG1 $LISTFILE
+			projdir=$(getDir $ARG1 $LISTFILE)
+			echo $stopMysql | bash
+			sleep 1
+			echo $stopApache | bash
+			changeRoot $ARG1 $LISTFILE $ROOT $projdir
+			sleep 1
+			echo $startMysql | bash
+			sleep 1
+			echo $startApache | bash
+			sublime $projdir
+			#startgulp, or any other custom commands you would like to run.
+            ;; 
+        list)
+			#ARG1 = too many arguments
+			listParamCheck $ARG1
+			showList $LISTFILE
+			exit
+            ;;
+        remove)
+			CASE='remove'
+			# ARG1 project_name
+			# ARG2 = Too many arguments
+			singleParamCheck $ARG1 $CASE $ARG2
+
+			removeProject $ARG1 $LISTFILE
+
+            ;;    
+        *)
+            echo $"Usage: $0 {add|select|list|remove}"
+            exit 1
+ 
+esac
+
