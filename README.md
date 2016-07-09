@@ -16,7 +16,7 @@ To use these tool you will need to make sure to properly set up your directories
 Next, you will need to set up a directory and file to store you project data. The project data will simply contain a a list of the project name and directory.
   
  > 9 HOME='' #set Home Directory
- > 10 LISTDIR="$HOME/Applications/project" #create a directory to store the project list in  
+ > 10 LISTDIR="$HOME/Applications/project" #create a directory to store the project list in     
  > 11 LISTFILE="$LISTDIR/project.list" #create a file to store the projects in.  
 
 Place the project file in /usr/bin so the script can be called from anywere in the terminal
